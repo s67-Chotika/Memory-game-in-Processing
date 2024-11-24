@@ -2,6 +2,10 @@ int rows = 3;  // Number of rows in the card grid
 int cols = 4;  // Number of columns in the card grid
 int[][] board = new int[rows][cols];  // 2D array to store card values
 int[] selected;  // Array to store positions of selected cards
+boolean[][] revealed = new boolean[rows][cols];  // 2D array to check if cards are revealed
+boolean isChecking = false;  // Flag to check if a pair of cards is being compared
+int pairsFound = 0;  // Counter for the number of matched pairs
+int delayCounter = 0;  // Counter for delay when cards don't match
 
 void setup() {
   size(400, 400);  // Set screen size
@@ -32,12 +36,18 @@ void startGame() {
     int j = 0;
     while (j < cols) {  // Loop through each column
       board[i][j] = numbers[index];  // Assign a value to each card
+      revealed[i][j] = false;  // Set all cards as unrevealed
+
       index++;  // Move to the next number in the array
       j++;  // Move to the next column in the same row
     }
     i++;  // Move to the next row
   }
+
   selected[0] = selected[1] = selected[2] = selected[3] = -1;
+  pairsFound = 0; 
+  isChecking = false; 
+  delayCounter = 0; 
 }
 
 void draw() {
@@ -53,7 +63,7 @@ void draw() {
       int x = (j * 100) + 50; // Calculate the X-coordinate for card center
       int y = (i * 100) + 100; // Calculate the Y-coordinate for card center
 
-      if ( (i == selected[0] && j == selected[1]) || (i == selected[2] && j == selected[3]) ) {  // If the card is selected or revealed 
+      if ( (i == selected[0] && j == selected[1]) || (i == selected[2] && j == selected[3]) || revealed[i][j] == true ) {  // If the card is selected or revealed 
         fill(200); // Color for revealed cards
         rect(x - 40, y - 40, 80, 80); // Draw the revealed card
         fill(0);
@@ -67,6 +77,24 @@ void draw() {
       j++;
     }
     i++;
+  }
+
+  // Check if the two selected cards match
+  if (isChecking == true) { // Handle delay for checking cards
+  
+    delayCounter++; // Increment the delay counter
+    if (delayCounter > 60) { // Delay for 60 frames
+    
+      if ( board[selected[0]][selected[1]] == board[selected[2]][selected[3]] ) { // Check if the cards match
+        // Mark matched cards as revealed
+        revealed[selected[0]][selected[1]] = true; 
+        revealed[selected[2]][selected[3]] = true;
+        pairsFound++; // Increment the number of matched pairs
+      }
+      selected[0] = selected[1] = selected[2] = selected[3] = -1; // Reset selected card positions
+      isChecking = false; // Reset checking status
+      delayCounter = 0; // Reset delay counter
+    }
   }
 
 }
@@ -87,7 +115,9 @@ void mousePressed() {
 
   if (mouseX >= cardX && mouseX <= cardX + 80 && 
       mouseY >= cardY && mouseY <= cardY + 80) { // Check if the mouse click is within the card area
-    
+
+    if (revealed[row][col] == false) {  // If the card hasn't been revealed yet
+
       if (selected[0] == -1) {  // If the first card hasn't been selected
         selected[0] = row; // Store the row of the first card
         selected[1] = col; // Store the column of the first card
