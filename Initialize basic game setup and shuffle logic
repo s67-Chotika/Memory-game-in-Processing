@@ -73,6 +73,17 @@ void draw() {
     textSize(16); // Set font size for button text
     text("Start Game", ButtonX + ButtonWidth / 2, ButtonY + ButtonHeight / 2); // Display button text
 
+    // Display game instructions
+    fill(0); // Set text color
+    textSize(16); // Set font size for instruction title
+    text("How to Play:", width / 2, height / 2 + 60); // Display instruction title
+    textSize(12); // Set font size for instructions
+    textAlign(LEFT, TOP); // Align text to the top-left
+    text("1. Click to flip two cards to see if they match.", width / 5, height / 2 + 80); // Instruction 1
+    text("2. If they match, the cards will stay face up.", width / 5, height / 2 + 100); // Instruction 2
+    text("3. If they don't match, they will flip back after a moment.", width / 5, height / 2 + 120); // Instruction 3
+    text("4. Match all pairs to win!", width / 5, height / 2 + 140); // Instruction 4
+
     return; // Exit the draw function
   }
 
