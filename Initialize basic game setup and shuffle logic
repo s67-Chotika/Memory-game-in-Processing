@@ -1,0 +1,42 @@
+int rows = 3;  // Number of rows in the card grid
+int cols = 4;  // Number of columns in the card grid
+int[][] board = new int[rows][cols];  // 2D array to store card values
+
+void setup() {
+  size(400, 400);  // Set screen size
+  startGame();
+}
+
+int[] shuffle_array(int[] array) {  // Function to shuffle an array using Fisher-Yates algorithm
+  int i = array.length - 1;  // Start from the last index
+  while (i > 0) {
+    int j = (int) random(i + 1); // Random index between 0 and i (0 to 11)
+    // Swap values between positions
+    int temp = array[i]; 
+    array[i] = array[j];
+    array[j] = temp;
+    i--;
+  }
+  return array; // Return the shuffled array
+}
+void startGame() { 
+  int[] numbers = {1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6};  // Card numbers in pairs
+  numbers = shuffle_array(numbers);  // Shuffle the card numbers
+
+  int index = 0;  // Index to iterate through the shuffled numbers
+  int i = 0;
+  while (i < rows) {  // Loop through each row
+    int j = 0;
+    while (j < cols) {  // Loop through each column
+      board[i][j] = numbers[index];  // Assign a value to each card
+      index++;  // Move to the next number in the array
+      j++;  // Move to the next column in the same row
+    }
+    i++;  // Move to the next row
+  }
+}
+
+void draw() {
+  background(255); // Set background to white
+
+}
