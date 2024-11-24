@@ -1,9 +1,12 @@
 int rows = 3;  // Number of rows in the card grid
 int cols = 4;  // Number of columns in the card grid
 int[][] board = new int[rows][cols];  // 2D array to store card values
+int[] selected;  // Array to store positions of selected cards
 
 void setup() {
   size(400, 400);  // Set screen size
+  textAlign(CENTER, CENTER);  // Set text alignment to center
+  selected = new int[4];  // Initialize array to store positions of two selected cards
   startGame();
 }
 
@@ -34,9 +37,65 @@ void startGame() {
     }
     i++;  // Move to the next row
   }
+  selected[0] = selected[1] = selected[2] = selected[3] = -1;
 }
 
 void draw() {
   background(255); // Set background to white
+// During gameplay
+// Go through all cards
+  int i = 0;
+  while (i < rows) { // Loop through each row
+    int j = 0;
+    while (j < cols) { // Loop through each column
+    
+     // Calculate card coordinates for centering the numbers and drawing the cards
+      int x = (j * 100) + 50; // Calculate the X-coordinate for card center
+      int y = (i * 100) + 100; // Calculate the Y-coordinate for card center
 
+      if ( (i == selected[0] && j == selected[1]) || (i == selected[2] && j == selected[3]) ) {  // If the card is selected or revealed 
+        fill(200); // Color for revealed cards
+        rect(x - 40, y - 40, 80, 80); // Draw the revealed card
+        fill(0);
+        textSize(32);
+        textAlign(CENTER, CENTER);
+        text(board[i][j], x, y); // Display the card value
+      } else {  // If the card is not revealed
+        fill(150); // Color for hidden cards
+        rect(x - 40, y - 40, 80, 80); // Draw the hidden card
+      }
+      j++;
+    }
+    i++;
+  }
+
+}
+
+void mousePressed() {
+
+  int col = mouseX / 100; // Calculate the column based on the mouse's X position
+  int row = (mouseY - 50) / 100; // Calculate the row based on the mouse's Y position, adjusted for offset
+
+  int cardX = (col * 100) + 50 - 40; // Calculate the X position of the card
+  int cardY = (row * 100) + 100 - 40; // Calculate the Y position of the card
+
+  // Debug information
+  println("MouseX: " + mouseX + ", MouseY: " + mouseY);
+  println("Row: " + row + ", Col: " + col);
+  println("CardX: " + cardX + " to " + (cardX + 80));
+  println("CardY: " + cardY + " to " + (cardY + 80));
+
+  if (mouseX >= cardX && mouseX <= cardX + 80 && 
+      mouseY >= cardY && mouseY <= cardY + 80) { // Check if the mouse click is within the card area
+    
+      if (selected[0] == -1) {  // If the first card hasn't been selected
+        selected[0] = row; // Store the row of the first card
+        selected[1] = col; // Store the column of the first card
+      } else if ( selected[2] == -1 && !(row == selected[0] && col == selected[1]) ) {  // If the first card is selected and the second card is not the same as the first
+        selected[2] = row;  // Store the row of the second card
+        selected[3] = col;  // Store the column of the second card
+      }
+  } else {
+    println("Click outside card area");  // Print message when clicking outside the card area
+  }
 }
