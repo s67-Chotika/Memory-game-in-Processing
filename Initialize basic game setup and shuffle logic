@@ -6,12 +6,17 @@ boolean[][] revealed = new boolean[rows][cols];  // 2D array to check if cards a
 boolean isChecking = false;  // Flag to check if a pair of cards is being compared
 int pairsFound = 0;  // Counter for the number of matched pairs
 int delayCounter = 0;  // Counter for delay when cards don't match
+int ButtonX, ButtonY, ButtonWidth, ButtonHeight;  // Position and size of buttons
+boolean gameStarted = false;  // Flag to check if the game has started
 
 void setup() {
   size(400, 400);  // Set screen size
   textAlign(CENTER, CENTER);  // Set text alignment to center
   selected = new int[4];  // Initialize array to store positions of two selected cards
-  startGame();
+  ButtonX = (width / 2) - 50;  // X-position of buttons
+  ButtonY = height / 2;  // Y-position of buttons
+  ButtonWidth = 100;  // Width of buttons
+  ButtonHeight = 30;  // Height of buttons
 }
 
 int[] shuffle_array(int[] array) {  // Function to shuffle an array using Fisher-Yates algorithm
@@ -48,10 +53,29 @@ void startGame() {
   pairsFound = 0; 
   isChecking = false; 
   delayCounter = 0; 
+  gameStarted = true;  // Set the game as started
 }
 
 void draw() {
   background(255); // Set background to white
+
+// If the game has not started, display the start screen
+  if (gameStarted == false) {  
+    fill(0);  // Set text color to black
+    textSize(32);  // Set font size for the title
+    textAlign(CENTER, CENTER);  // Align text to the center
+    text("Memory Game", width / 2, height / 2 - 50);  // Display the game title
+    
+    // Draw the start game button
+    fill(100, 150, 200); // Set button color
+    rect(ButtonX, ButtonY, ButtonWidth, ButtonHeight, 10); // Draw the button
+    fill(255); // Set button text color to white
+    textSize(16); // Set font size for button text
+    text("Start Game", ButtonX + ButtonWidth / 2, ButtonY + ButtonHeight / 2); // Display button text
+
+    return; // Exit the draw function
+  }
+
 // During gameplay
 // Go through all cards
   int i = 0;
@@ -101,6 +125,14 @@ void draw() {
 
 void mousePressed() {
 
+  // If the game hasn't started
+  if (gameStarted == false) { 
+    if (mouseX > ButtonX && mouseX < ButtonX + ButtonWidth && mouseY > ButtonY && mouseY < ButtonY + ButtonHeight) {
+      startGame(); // Start the game when the button is clicked
+    }
+    return; // Exit the mousePressed function
+  }
+
   int col = mouseX / 100; // Calculate the column based on the mouse's X position
   int row = (mouseY - 50) / 100; // Calculate the row based on the mouse's Y position, adjusted for offset
 
@@ -128,4 +160,5 @@ void mousePressed() {
   } else {
     println("Click outside card area");  // Print message when clicking outside the card area
   }
+ }
 }
