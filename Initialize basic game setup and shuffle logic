@@ -31,6 +31,7 @@ int[] shuffle_array(int[] array) {  // Function to shuffle an array using Fisher
   }
   return array; // Return the shuffled array
 }
+
 void startGame() { 
   int[] numbers = {1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6};  // Card numbers in pairs
   numbers = shuffle_array(numbers);  // Shuffle the card numbers
@@ -56,6 +57,7 @@ void startGame() {
   gameStarted = true;  // Set the game as started
 }
 
+// Function to run the game loop
 void draw() {
   background(255); // Set background to white
 
@@ -82,8 +84,23 @@ void draw() {
     text("1. Click to flip two cards to see if they match.", width / 5, height / 2 + 80); // Instruction 1
     text("2. If they match, the cards will stay face up.", width / 5, height / 2 + 100); // Instruction 2
     text("3. If they don't match, they will flip back after a moment.", width / 5, height / 2 + 120); // Instruction 3
-    text("4. Match all pairs to win!", width / 5, height / 2 + 140); // Instruction 4
+    text("4. Match all pairs to win!", width / 5, height / 2 + 140); // Instruction 
 
+    return; // Exit the draw function
+  }
+
+// After completing the game
+  if (pairsFound == (rows * cols) / 2) { // Check if all pairs have been matched
+    fill(0);
+    textSize(32);
+    textAlign(CENTER, CENTER);
+    text("You Win!", width / 2, (height / 2) - 50 ); // Display the winning message
+
+    fill(100, 200, 100);
+    rect(ButtonX, ButtonY, ButtonWidth, ButtonHeight, 10); // Draw the play again button
+    fill(255);
+    textSize(16);
+    text("Play Again", ButtonX + ButtonWidth / 2, ButtonY + ButtonHeight / 2); // Display button text
     return; // Exit the draw function
   }
 
@@ -143,6 +160,13 @@ void mousePressed() {
     }
     return; // Exit the mousePressed function
   }
+  // If all pairs of cards are matched
+  if (pairsFound == (rows * cols) / 2) { 
+    if (mouseX > ButtonX && mouseX < ButtonX + ButtonWidth && mouseY > ButtonY && mouseY < ButtonY + ButtonHeight) {
+      startGame(); // Restart the game when the "Play Again" button is clicked
+    }
+    return; // Exit the mousePressed function
+  }
 
   int col = mouseX / 100; // Calculate the column based on the mouse's X position
   int row = (mouseY - 50) / 100; // Calculate the row based on the mouse's Y position, adjusted for offset
@@ -167,9 +191,10 @@ void mousePressed() {
       } else if ( selected[2] == -1 && !(row == selected[0] && col == selected[1]) ) {  // If the first card is selected and the second card is not the same as the first
         selected[2] = row;  // Store the row of the second card
         selected[3] = col;  // Store the column of the second card
+        isChecking = true;  // Set to start checking for a match
       }
+    }
   } else {
     println("Click outside card area");  // Print message when clicking outside the card area
   }
  }
-}
